@@ -1,21 +1,23 @@
-# jQuery Tic-Tac-Toe
+# jQuery Logic
 
-## Contents
 
-* Objective
-* HTML
-* JavaScript
-* Running your server
-* Hints
-* Resources
 
-## Objective
+## Objectives
 
-Make a tic-tac-toe game that behaves like the following video (right click and select Save Link As) 
+Now that we've learned what jQuery can do for us visually, let's explore how far we can leverage it for logic. We're going to walk through building a simple game of Tic-Tac-Toe. 
 
-Right click on the link below and select "Save link as..." to see a video of how your calculator should behave.
 
-[video](https://s3-us-west-2.amazonaws.com/web-dev-readme-photos/js/jquery-tic-tac-toe.mp4)
+
+## SWBATS
+
+- Explain the extent of logic and understand when it is appropriate to use
+- Use jQuery methods to manipulate specific UI elements
+
+
+
+## Introduction
+
+We're going to be using JavaScript and jQuery to make a 2-player functional game that keeps track of the winner. Input will be through the mouse.
 
 ## HTML
 
@@ -64,14 +66,13 @@ To figure out how jQuery can "see" these values, take a look at the Hints sectio
 * `message()`
   * This function should accept a string and add the string to the `div` with an id of "message" 
 
-## Running Your Server
+## Viewing your work
 
 There a couple options to view how your code is behaving:
 
 * You can right click on your `index.html` file from Sublime or Finder and select `Open in Browser`.
-* You could also run a Python server by running `python -m SimpleHTTPServer` from your terminal and visiting [http://localhost:8000](http://localhost:8000/).
 
-## Hints
+
 
 #### jQuery data()
 
@@ -98,7 +99,5 @@ Take a look at it below:
 When the client clicks on `Comedy Cellar`, the JavaScript will log the string "center" to the console. 
 
 When the client clicks on `About`, the JavaScript will make an alert box with the string "right".
-
-Take a loook at the [jQuery data() docs](https://api.jquery.com/jquery.data/) for more info.
 
 
