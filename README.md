@@ -101,8 +101,4 @@ When the client clicks on `About`, the JavaScript will make an alert box with th
 
 Take a loook at the [jQuery data() docs](https://api.jquery.com/jquery.data/) for more info.
 
-## Resources
 
-* [jQuery data()](https://api.jquery.com/jquery.data/)
-
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/jquery-tictactoe' title='jQuery Tic-Tac-Toe'>jQuery Tic-Tac-Toe</a> on Learn.co and start learning to code for free.</p>
