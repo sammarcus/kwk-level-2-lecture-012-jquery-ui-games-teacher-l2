@@ -1,86 +1,113 @@
 # jQuery Logic
 
-
+**NOTE:** This lecture should be coded step by step in front of the students. Please take a moment to remove the provided code in `tictactoe.js` and make sure you are familiar with the steps described below.
 
 ## Objectives
 
 Now that we've learned what jQuery can do for us visually, let's explore how far we can leverage it for logic. We're going to walk through building a simple game of Tic-Tac-Toe. 
 
 
-
 ## SWBATS
 
-- Explain the extent of logic and understand when it is appropriate to use
-- Leverage jQuery methods to manipulate specific UI elements to add interactivity
-
+- JAVASCRIPT - Identify JavaScript's role in front end web development
+- JAVASCRIPT/JQUERY - Leverage jQuery methods to manipulate specific DOM elements to add interactivity
 
 
 ## Introduction
 
-We're going to be using JavaScript and jQuery to make a 2-player functional game that keeps track of the winner. Input will be through the mouse, and gameplay will be tracked to determine if and when there is a winner, and who that is!
+We're going to be using JavaScript and jQuery to make a 2-player Tic-Tac-Toe game. We will use JavaScript/jQuery to track the state of the game, (if and who the winner is), as well as update the DOM as the game is played. 
 
 ## Board Set Up
 
-The `index.html` page, when served, looks like this:
+The `index.html` page should look like this when opened in Chrome:
 
 ![tic-tac-toe board](https://s3-us-west-2.amazonaws.com/web-dev-readme-photos/js/jquery-tic-tac-toe-board)
 
-The grid is made by a table. It's empty of course, but will make for a great game later. At the technical level, each square is in a table row, or `tr` and each square is a table data, or `td` (you could also call this a cell).
+The grid is made by an HTML `<table>` element. It's empty of course, as it represents a new game. The grid is made up of 3 rows (`<tr>` elements), which are made up of 3 cells each (`<td>` elements).
 
 Here's the HTML that makes this up:
 
 ```html
-		<table border="1" cellpadding="40">
-			<tr>
-				<td data-x="0" data-y="0"></td>
-				<td data-x="1" data-y="0"></td>
-				<td data-x="2" data-y="0"></td>
-			</tr>
-			<tr>
-				<td data-x="0" data-y="1"></td>
-				<td data-x="1" data-y="1"></td>
-				<td data-x="2" data-y="1"></td>
-			</tr>
-			<tr>
-				<td data-x="0" data-y="2"></td>
-				<td data-x="1" data-y="2"></td>
-				<td data-x="2" data-y="2"></td>
+<table border="1" cellpadding="40">
+  
+  <tr>
+    <td data-x="0" data-y="0"></td>
+    <td data-x="1" data-y="0"></td>
+    <td data-x="2" data-y="0"></td>
+  </tr>
+  
+  <tr>
+    <td data-x="0" data-y="1"></td>
+    <td data-x="1" data-y="1"></td>
+    <td data-x="2" data-y="1"></td>
+  </tr>
+  
+  <tr>
+    <td data-x="0" data-y="2"></td>
+    <td data-x="1" data-y="2"></td>
+    <td data-x="2" data-y="2"></td>
+  </tr>
+  
+</table>
 ```
 
-Let's break this down. Each `td` has two data attributes: x and y coordinates. The top left `td` had an x of 0 and a y of 0.
+If you look closely, you will notice that our cells above (the `<td>` elements) have specific attributes. Let's break this down: each cell has attributes: `data-x` and `data-y`. The top left `td` has a `data-x` of 0 and a `data-y` of 0. The `y` values represent the cell positions vertically and the `x` values represent the cell positions horizontally. For example, the top left cell is the first row, and the first column, of the board:
 
 ```html
-<td data-x="0" data-y="0"></td>
+<td &data-x="0" &data-y="0"></td>
 ```
 
-The middle `td` has an x of 1 and a y of 1.
+...and the last cell is in the last row, and the last column, of the board:
 
 ```html
-<td data-x="1" data-y="1"></td>
-```
-
-The lower right corner has an x of 2 and a y of 2.
-
-```html
-<td data-x="2" data-y="2"></td>
+<td &data-x="2" &data-y="2"></td>
 ```
 
 
+#### Taking Turns
 
-#### Turns and Wins
-
-We need to set up the frame for the gameplay:
+As we know, HTML is insufficient to keep track of the game logic. We will need to write some JavaScript to manage the gameplay. Let's start off by writing an event listener, that waits for a user to click on a cell. We need this so our program can know when a user is trying to draw an 'X' or and 'O'. Lucky for us, jQuery makes this trivial with the `.click` method, which attached an event listener to a DOM element:
 
 ```js
-var turn = 0;
-var winningCombos = [[[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[0,2],[1,2],[2,2]], [[0,0],[1,1],[2,2]], [[0,0],[0,1],[0,2]], [[2,0],[2,1],[2,2]], [[1,0],[1,1],[1,2]], [[2,0],[1,1],[0,2]]]
+// this will listen for clicks anywhere on the board
+$("tbody").click(event => {
+  // when the board is clicked, we can get the specific element that was clicked (aka the specific cell) through 'event.target'
+  let cell = $(event.target)
+  cell.html("X")
+});
 ```
 
-Since we'll be keeping track of turns through counting them, we'll establish `turn` at 0 and increment it later. There are 8 theoritical possible combinations any board can have to win, so we've set these up in an array, repectively.
+**NOTE:** Show this in the browser. We should be able to draw "X" in every cell. 
+
+As this stands, only 'X' can be drawn, which is only half of what we want. If we want to refactor, and make this 2-player, we will need some way to keep track of which player's turn it is. To do this, we could swap some global variable back and forth between "X" and "O" every turn. We have a better solution, though, which kills two birds with one stone:
+
+```js
+var turnCount = 0
+
+function getPlayerMarker() {
+  // this ternary checks whether turnCount is odd or even and returns the respective player
+  return (turnCount % 2 === 0) ? "X" : "O"
+}
+
+$("tbody").click(event => {
+  $(event.target).html(getPlayerMarker())
+  // we need to increment the turn
+  turnCount++
+});
+```
+
+**NOTE:** Show this in the browser. We should be able to draw "X" and an "O" interchangeably in every cell. 
+
+**now we jump into how to find a winner**
+
+**now we jump into how to reset the board**
+
+**we have a corner case of a cat's game**
+
 
 #### Reading the Board
 
-First things first, we'll need to have jQuery read the board. Each `td` or cell in the table has two data attributes, "x" and "y". jQuery has built out a function, `data()`. Say we had a basic HTML button:
+First things first, we'll need to &have jQuery read the board. Each `td` or cell in the table has two data attributes, "x" and "y". jQuery has built out a function, `data()`. Say we had a basic HTML button:
 
 ```html
 <p data-place="right" class="btn" id"start">Start game</p>
@@ -237,6 +264,22 @@ var resetGame = function() {
   $("td").html("");
   turn = 0;
 }
+```
+
+---
+
+```js
+var turn = 0;
+var winningCombos = [
+  [[0,0],[1,0],[2,0]],
+  [[0,1],[1,1],[2,1]],
+  [[0,2],[1,2],[2,2]],
+  [[0,0],[1,1],[2,2]],
+  [[0,0],[0,1],[0,2]],
+  [[2,0],[2,1],[2,2]],
+  [[1,0],[1,1],[1,2]],
+  [[2,0],[1,1],[0,2]]
+]
 ```
 
 

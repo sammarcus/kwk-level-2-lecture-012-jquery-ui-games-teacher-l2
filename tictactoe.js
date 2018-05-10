@@ -1,7 +1,7 @@
 var turn = 0;
 var winningCombos = [[[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[0,2],[1,2],[2,2]], [[0,0],[1,1],[2,2]], [[0,0],[0,1],[0,2]], [[2,0],[2,1],[2,2]], [[1,0],[1,1],[1,2]], [[2,0],[1,1],[0,2]]]
 
-var checkCells = function(ary) {
+function checkCells(ary) {
   for(var i = 0; i < ary.length; i++) {
     var winningCombo = ary[i];
     var x = winningCombo[0];
@@ -14,7 +14,7 @@ var checkCells = function(ary) {
   return true;
 }
 
-var checkWinner = function() {
+function checkWinner() {
   for(var i = 0; i < winningCombos.length; i++) {
     if(checkCells(winningCombos[i]) == true) {
       message("Player " + player() + " Won!");
@@ -24,7 +24,7 @@ var checkWinner = function() {
   return false;
 }
 
-var player = function() {
+function player() {
   if(turn % 2 == 0) {
     return "X";
   }
@@ -33,7 +33,7 @@ var player = function() {
   }
 }
 
-var tie = function() {
+function tie() {
   var thereIsATie = true;
   $("td").each(function() {
     if ($(this).html().length <= 0) {
@@ -44,11 +44,11 @@ var tie = function() {
   return thereIsATie;
 }
 
-var noCellMatch = function(element) {
+function noCellMatch(element) {
   return (element.html() != player())
 }
 
-var doTurn = function(event){
+function doTurn(event){
   updateState(event);
   if(checkWinner() || tie() ) {
     resetGame();
@@ -57,20 +57,20 @@ var doTurn = function(event){
   }
 }
 
-var resetGame = function() {
+function resetGame() {
   $("td").html("");
   turn = 0;
 }
 
-var message = function(message) {
+function message(message) {
   $("#message").html(message);
 }
 
-var updateState = function(event) {
+function updateState(event) {
   $(event.target).html(player());
 }
 
-var attachListeners = function() {
+function attachListeners() {
   $("tbody").click(function(event) {
     doTurn(event)
   });
