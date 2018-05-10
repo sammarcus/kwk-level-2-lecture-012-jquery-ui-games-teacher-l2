@@ -11,13 +11,13 @@ Now that we've learned what jQuery can do for us visually, let's explore how far
 ## SWBATS
 
 - Explain the extent of logic and understand when it is appropriate to use
-- Use jQuery methods to manipulate specific UI elements
+- Leverage jQuery methods to manipulate specific UI elements to add interactivity
 
 
 
 ## Introduction
 
-We're going to be using JavaScript and jQuery to make a 2-player functional game that keeps track of the winner. Input will be through the mouse.
+We're going to be using JavaScript and jQuery to make a 2-player functional game that keeps track of the winner. Input will be through the mouse, and gameplay will be tracked to determine if and when there is a winner, and who that is!
 
 ## Board Set Up
 
@@ -106,7 +106,7 @@ var checkCells = function(ary) {
     var x = winningCombo[0]; 
     var y = winningCombo[1]; 
     var selector = $('[data-x="' + x + '"][data-y="' + y + '"]')
-    if( noCellMatch(selector)) {
+    if( noCellMatch(selector)) { //explained later
       return false;
     }
   }
@@ -132,6 +132,15 @@ var checkWinner = function() {
 
 The purpose of the above is to simply announce when someone one, and who it was. If no one won yet, then we keep it as returning `false`. If there is a winner, the function should make one of two strings: "Player X Won!" or "Player O Won!". It should then pass this string to `message()` (later).
 
+
+
+One more thing: you'll notice that if there is NO winner, we need to return `false` Let's do that with `noCellMatch`:
+
+```js
+var noCellMatch = function(element) {
+  return (element.html() != player())
+}
+```
 
 
 ### Game Progress
@@ -190,7 +199,7 @@ var doTurn = function(event){
   }
 }
 ```
-Notice that we have the `||`, meaning if there is a winner OR a tie, we know the game has come to an end. Cool! We're nearly done, but now comes the fun part of adding jQuery. We'll need to have a function that listens for when a player clicks on a cell and then calls `doTurn()` with the data it needs.
+Notice that we have the `||`, meaning if there is a winner OR a tie, we know the game has come to an end. Cool! We're nearly done, but now comes the fun part of adding jQuery. We'll need to have a function that listens for when a player clicks on a cell and then calls `doTurn()` with the data it needs. This is where jQuery shines!
 
 ```js
 var attachListeners = function() {
@@ -202,20 +211,26 @@ var attachListeners = function() {
 
 
 
-
-
+Great. Now we'll add another jQuery method to call on  `player()` and add the return value of this function to the clicked cell on the table. 
 
 ```js
-var noCellMatch = function(element) {
-  return (element.html() != player())
+var updateState = function(event) {
+  $(event.target).html(player());
+}
+```
+We're making event listeners work for us! We need 3 more functions and then we'll be set.  Remember how we discussed communicating the winner to the players? We need a way to print that out. By having `message`  accept a string we give it and add that string to the `div`, we can do just that. For simplicity we'll set it to also have an id of `"message"`. 
+
+```js
+var message = function(message) {
+  $("#message").html(message);
 }
 ```
 
 
 
+## Playing along
 
-
-
+This alone shapes up to be a great game. As a bonus, if we want to play again, we can use one final bit of jQuery to clear the board. It also resets our turn counter to `0`, preparing us for another game!
 
 ```js
 var resetGame = function() {
@@ -226,53 +241,4 @@ var resetGame = function() {
 
 
 
-```js
-var message = function(message) {
-  $("#message").html(message);
-}
-```
-```js
-var updateState = function(event) {
-  $(event.target).html(player());
-}
-```
-
-
-
-
-
-
-
-
-
-
-
-
-## STEPS with JavaScript
-
-* `attachListeners()`
-  * You must have a function called `attachlisteners()`
-  * When a client clicks on a cell, the function `doTurn()` should be called and passed a parameter of the event
-* `doTurn()`
-  * Increment the variable `turn` by one
-  * Should call on the function `updateState()` and pass it the event
-  * Should call on `checkForWinners()`
-* `player()`
-  * If the turn number is even, this function should return the string "X", else it should return the string "O"
-* `updateState()`
-  * **This method should call on `player()` and add the return value of this function to the clicked cell on the table**
-* `checkWinner()`
-  * This function should evaluate the board to see if anyone has won
-  * If there is a winner, this function should make one of two strings: "Player X Won!" or "Player O Won!". It should then pass this string to `message()`.
-* `message()`
-  * **This function should accept a string and add the string to the `div` with an id of "message"** 
-
-## Viewing your work
-
-There a couple options to view how your code is behaving:
-
-* You can right click on your `index.html` file from Sublime or Finder and select `Open in Browser`.
-
-
-
-
+In terms of actually playing, all we need to do is right click on your `index.html` file from Sublime or Finder and select `Open in Browser`. 
