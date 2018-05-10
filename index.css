@@ -1,0 +1,22 @@
+body {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background-color: purple;
+}
+
+table {
+  background-color: orange;
+}
+
+td {
+  font-weight: bold;
+  text-align: center;
+  padding: 0;
+  width: 100px;
+  height: 100px;
+}
+
+
+  

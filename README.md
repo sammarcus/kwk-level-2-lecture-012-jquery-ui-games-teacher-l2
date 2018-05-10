@@ -121,6 +121,8 @@ And that we wanted to communicate where it was after the user clicks on it:
     alert(location);
   });
 </script>
+
+
 ```
 When the client clicks on `Start game`, the JavaScript will make an alert box with the string "right" (look back at the HTML to see that!). We are using `data()` to retrieve this. Since our game will need to be on the lookout for a winner after every turn, it will need to check who played what where, or in other words **read the data** on the board!
 
@@ -242,14 +244,14 @@ Great. Now we'll add another jQuery method to call on  `player()` and add the re
 
 ```js
 var updateState = function(event) {
-  $(event.target).html(player());
+  $(event.target).html(player())
 }
 ```
 We're making event listeners work for us! We need 3 more functions and then we'll be set.  Remember how we discussed communicating the winner to the players? We need a way to print that out. By having `message`  accept a string we give it and add that string to the `div`, we can do just that. For simplicity we'll set it to also have an id of `"message"`. 
 
 ```js
 var message = function(message) {
-  $("#message").html(message);
+  $("#message").html(message)
 }
 ```
 
