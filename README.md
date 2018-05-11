@@ -98,6 +98,76 @@ $("tbody").click(event => {
 
 **NOTE:** Show this in the browser. We should be able to draw "X" and an "O" interchangeably in every cell. 
 
+
+
+#### Reading the Board
+
+#### Winning
+
+Now we jump into how to find a winner. Think about what it takes to win a game: the game ends as soon as any 9 cells contain three of the same characters in a neigboring cell. Considering all posibile outcomes, that means there are 8 possible winning combinatons. We can represent this in an array of data that will like confusing, but will be explained:
+
+```js
+var winningCombos = [
+  [[0, 0], [1, 0], [2, 0]], // this is the top row, from left to right
+  [[0, 1], [1, 1], [2, 1]],
+  [[0, 2], [1, 2], [2, 2]],
+  [[0, 0], [1, 1], [2, 2]],
+  [[0, 0], [0, 1], [0, 2]],
+  [[2, 0], [2, 1], [2, 2]],
+  [[1, 0], [1, 1], [1, 2]],
+  [[2, 0], [1, 1], [0, 2]] // this is diagonal, between lower left cell and upper right cell
+]
+```
+
+What you are looking at above is 8 arrays, one per line, with 3 smaller nested arrays inside each of the 8. Remembering that we start counting at zero, each smaller array is simply the positional location of the winning cell. Remember how in `getPlayerMarker` we established it didn't matter (for the purposes of seeing if someone won) *who* actually won? Same idea here. By abstacting out just the *location* of each winning cell, we have a formula of where the winner made their winning move. 
+
+
+
+We're going to use this for our next function, which will verify if a win occurred (given we supply it with the appropriate data!). If not, it will return back `false`. 
+
+
+
+```js
+function checkWon() {
+  for (var idx = 0; idx < winningCombos.length; idx++) {
+    const combo = winningCombos[idx]
+    const winner = comboMade(combo)
+    if (winner) {
+      return winner
+    }
+  }
+
+  return false
+}
+```
+
+
+
+#### Resetting
+
+When a game finsihes up, it would be great if it cleared the board or us and prepared us for a new game:
+
+
+
+```js
+function resetGame() {
+  $("td").html(""); // sets to an empty string
+  turnCount = 0;  // brings turnCount back to zero for next game
+}
+```
+
+If we were playing with pen and paper, we'd have to draw a new board out. Not for our page! Since we already have the board, we can use jQuery to clear the cell's HTML value to an empty string. The final set that might not be as obvious (and, alas, wouldn't be necessary with pen and paper) is to reset `turnCount` back to zero.
+
+
+
+#### Tie Game
+
+
+
+#### Styling
+
+
+
 **now we jump into how to find a winner**
 
 **now we jump into how to reset the board**
@@ -105,7 +175,10 @@ $("tbody").click(event => {
 **we have a corner case of a cat's game**
 
 
-#### Reading the Board
+
+
+
+#### 
 
 First things first, we'll need to &have jQuery read the board. Each `td` or cell in the table has two data attributes, "x" and "y". jQuery has built out a function, `data()`. Say we had a basic HTML button:
 
@@ -125,39 +198,6 @@ And that we wanted to communicate where it was after the user clicks on it:
 
 ```
 When the client clicks on `Start game`, the JavaScript will make an alert box with the string "right" (look back at the HTML to see that!). We are using `data()` to retrieve this. Since our game will need to be on the lookout for a winner after every turn, it will need to check who played what where, or in other words **read the data** on the board!
-
-Take a look below:
-
-```js
-var checkCells = function(ary) {
-  for(var i = 0; i < ary.length; i++) {
-    var winningCombo = ary[i]; 
-    var x = winningCombo[0]; 
-    var y = winningCombo[1]; 
-    var selector = $('[data-x="' + x + '"][data-y="' + y + '"]')
-    if( noCellMatch(selector)) { //explained later
-      return false;
-    }
-  }
-  return true;
-}
-```
-
-Let's break this down:
-
-We need to check each and every cell, which are defined by their `x` and`y`coordinates. We can count up and step through to do this, and compare the data by selecting it. By using ```data-x=``` and ```data-y=```, we can capture it just like we did above. We've already defined what a winning board looks like via arrays.  If the board matches, it will return `true` (last line). We'll use that in our next function to act on a winner. Check it out:
-
-```js
-var checkWinner = function() {
-  for(var i = 0; i < winningCombos.length; i++) {
-    if(checkCells(winningCombos[i]) == true) {
-      message("Player " + player() + " Won!");
-      return true;
-    }
-  }
-  return false;
-}
-```
 
 The purpose of the above is to simply announce when someone one, and who it was. If no one won yet, then we keep it as returning `false`. If there is a winner, the function should make one of two strings: "Player X Won!" or "Player O Won!". It should then pass this string to `message()` (later).
 
