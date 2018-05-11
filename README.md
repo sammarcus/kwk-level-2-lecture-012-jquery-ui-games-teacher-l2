@@ -100,6 +100,28 @@ $("tbody").click(event => {
 
 
 
+Now that the move has been conveyed, we need to do a few things to process it. At a minimum, we'll want to increment our tally of how many turns have elapsed, check if there is a winner (or other outcome of the game), and communicate the outcome to the players.
+
+```js
+function processTurn(event) {
+  turnCount++ // increments turn tally after each move
+  const winner = checkWon() // determines if there is a winner
+  if (winner) {
+    window.alert(`${winner} WON!`) // display WHO won
+    resetGame() // resets the game to play again
+  } else if (turnCount === 9) {
+    window.alert(`GAME TIED!`)
+    resetGame()
+  }
+}
+```
+
+
+
+Besides winning, the only other possible outcome is a tie. While winning can happen as early as the 5th turn, the only way a tie can occur is if all cells are occupied (and 9 turns have been played). We've abstracted some of the logic for winning and resetting below, but this processor facilitates running these actions in the proper order, through basic conditionals.
+
+
+
 #### Reading the Board
 
 #### Winning
@@ -123,9 +145,15 @@ What you are looking at above is 8 arrays, one per line, with 3 smaller nested a
 
 
 
+
+
+
+
+Let's set up two actions, one to check where the user has clicked, and the other 
+
+
+
 We're going to use this for our next function, which will verify if a win occurred (given we supply it with the appropriate data!). If not, it will return back `false`. 
-
-
 
 ```js
 function checkWon() {
@@ -164,7 +192,15 @@ If we were playing with pen and paper, we'd have to draw a new board out. Not fo
 
 
 
+
+
 #### Styling
+
+There's not much fun in a plain old white board! With a little CSS we can make things more interesting. We like to keep things retro, so our `body` element is set to ` background-color: purple;`, and our `table`  a snazzy  `background-color: orange;`.  Open up `index.css` file to change things up!
+
+
+
+
 
 
 
