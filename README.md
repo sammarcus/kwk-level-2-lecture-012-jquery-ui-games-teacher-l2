@@ -255,101 +255,74 @@ function markCell() {
 }
 ```
 
-**NOTE:** Take a moment now to make sure everything is working as intended. Is there any functionality that is missing? Do we want to be able to draw 
+**NOTE:** Take a moment now to make sure everything is working as intended with the class. Is there any functionality that is missing? Have we done our due diligence and created a fully working tic-tac-toe game?
 
+That does it! We have created a fully functioning tic-tac-toe 'in-the-browser' game using JavaScript + jQuery. 
 
+But wait! There is some low hanging fruit left for us...
 
-#### Edge Cases
+## JAZZ!
 
-In programming, it's easy to assume what we think **should** happen. Naturally, there will be a winner! However, often through no fault of their own, users have a way of finding very unique circumstances that may bring our program to a state we had never expected it would be in.
+As the game currently stands, on 'game end' we simply log a message and reset the board. Instead, let's reward the users and request _their_ prompt to restart the game. We can do this easily with a little refactoring to `resetGame()`:
 
+```js
+// now, we will take in a custom message to display and have a popup!
+function resetGame(msg) {
+  $("#message").text(msg)
+  marksOnBoard = 0
+  mark = "X"
+  $(".cell").text("")
+}
+```
 
+...this makes a sweet message, but it doesn't disappear on click! Let's be terribly clever and add an event listener to our `#message` element that, whenever it is clicked, makes it disappear. We can also use this opportunity to refactor our code so the _message_ is displayed on game end and  `resetGame()` is only executed when a user acknowledges it...
+
+```js
+// now reset game only does what its name implies
+function resetGame() {
+  $("#message").text("")
+  $("#message").css("pointer-events", "none")
+  marksOnBoard = 0
+  mark = "X"
+  $(".cell").text("")
+}
+
+// display message is only responsible for showing a message and making itself clickable
+function displayMsg(msg) {
+  $("#message").text(msg)
+  $("#message").css("pointer-events", "all")
+}
+
+// we need to initiate an event listener on our message div!
+function listenForClickOnMessage() {
+  $("#message").click(resetGame)
+}
+
+listenForClicksOnCells()
+```
+...and we can't forget to update out `markCell()` function to use `displayMsg()` (which is now responsible for `resetGame()` via the message event listener)...
+
+```js
+function markCell() {
+  if (!this.innerText) {
+    this.innerText = mark
+    marksOnBoard++
+    if (playerWon(mark)) {
+      displayMsg(`${mark} won the game! Click anywhere to play again`)
+    } else if (marksOnBoard === 9) {
+      displayMsg(`Tie Game! Click anywhere to play again`)
+    }
+    mark = (mark === 'X') ? 'O' : 'X'
+  }
+}
+```
+
+**NOTE:** At this point, turn the conversation over to the students. What more could we do for our application? Is there anything we could refactor (specifically, do our function names _accurately represent what our functions do?_). `markCell()` in particular looks like it has acquired some functionality outside of what its name claims it does. That is ok, and is normal in the development process. What we want to ask ourselves is _how could it be improved?_
+
+## Wrapping Up
+
+We hope building tic-tac-toe has made you feel as free as this horse. As burgeoning programmers, she really embodies us, doesn't she? Once a user, stuck in someone else's manufactured fence/browser. Now with the critical skills and know-how to blast outta the artificial boundaries and enter the wide world of development! 
 
 ![img](https://media.giphy.com/media/8F3su6mBqzy3ShRLsw/giphy.gif)
-
-
-
-Besides winning, the only other possible outcome is a tie. While not a particularly *extreme* edge case, it is still an outcome less likely to occur than winning — a win can happen as early as the 5th turn, yet the only way a tie can occur is if all cells are occupied (and 9 turns have been played). 
-
-
-
-#### Reading the Board
-
-#### Winning
-
-Now we jump into how to find a winner. Think about what it takes to win a game: the game ends as soon as any 9 cells contain three of the same characters in a neigboring cell. Considering all posibile outcomes, that means there are 8 possible winning combinatons. We can represent this in an array of data that will like confusing, but will be explained:
-
-```js
-var winningCombos = [
-  [[0, 0], [1, 0], [2, 0]], // this is the top row, from left to right
-  [[0, 1], [1, 1], [2, 1]],
-  [[0, 2], [1, 2], [2, 2]],
-  [[0, 0], [1, 1], [2, 2]],
-  [[0, 0], [0, 1], [0, 2]],
-  [[2, 0], [2, 1], [2, 2]],
-  [[1, 0], [1, 1], [1, 2]],
-  [[2, 0], [1, 1], [0, 2]] // this is diagonal, between lower left cell and upper right cell
-]
-```
-
-What you are looking at above is 8 arrays, one per line, with 3 smaller nested arrays inside each of the 8. Remembering that we start counting at zero, each smaller array is simply the positional location of the winning cell. Remember how in `getPlayerMarker` we established it didn't matter (for the purposes of seeing if someone won) *who* actually won? Same idea here. By abstacting out just the *location* of each winning cell, we have a formula of where the winner made their winning move. 
-
-Let's set up two actions, one to assemble the combination where the user has clicked, and the other to calculate if the combination results in a win.
-
-```js
-function comboMade(arr) {
-  const cells = arr.map(coord => $(getCellID(coord)))
-  const marker = cells[0].text()
-  const comboMade = cells.every(cell => cell.text() === marker)
-  return comboMade ? marker : false // here is another ternary like earlier, just a shorthand for an if statement
-}
-```
-
-We're going to use this for our next function, which will verify if a win occurred (given we supply it with the appropriate data!). If not, it will return back `false`, that there is no winner. This is comparing the arrays we established in `winningCombos` against the combination passed in that was generated from `comboMade`.
-
-```js
-function checkWon() {
-  for (var idx = 0; idx < winningCombos.length; idx++) {
-    const combo = winningCombos[idx]
-    const winner = comboMade(combo)
-    if (winner) {
-      return winner
-    }
-  }
-
-  return false
-}
-```
-
-
-
-#### Resetting
-
-When a game finsihes up, it would be great if it cleared the board or us and prepared us for a new game:
-
-
-
-```js
-function resetGame() {
-  $("td").html(""); // sets to an empty string
-  turnCount = 0;  // brings turnCount back to zero for next game
-}
-```
-
-If we were playing with pen and paper, we'd have to draw a new board out. Not for our page! Since we already have the board, we can use jQuery to clear the cell's HTML value to an empty string. The final set that might not be as obvious (and, alas, wouldn't be necessary with pen and paper) is to reset `turnCount` back to zero.
-
-
-
-#### Styling
-
-There's not much fun in a plain old white board! With a little CSS we can make things more interesting. We like to keep things retro, so our `body` element is set to ` background-color: purple;`, and our `table`  a snazzy  `background-color: orange;`.  Open up `index.css` file to change things up!
-
-
-
-
-
-## Playing along
-
-In terms of actually playing, all we need to do is right click on your `index.html` file from Sublime or Finder and select `Open in Browser`. 
 
 [every]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every

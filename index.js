@@ -13,9 +13,17 @@ var marksOnBoard = 0
 var mark = 'X'
 
 function resetGame() {
+  $("#message").text("")
+  $("#message").css("pointer-events", "none")
   marksOnBoard = 0
   mark = "X"
-  debugger
+  $(".cell").text("")
+}
+
+// display message is only responsible for showing a message and making itself clickable
+function displayMsg(msg) {
+  $("#message").text(msg)
+  $("#message").css("pointer-events", "all")
 }
 
 function elementContains(id, mark) {
@@ -37,11 +45,9 @@ function markCell() {
     this.innerText = mark
     marksOnBoard++
     if (playerWon(mark)) {
-      console.log(mark, "won the game!")
-      resetGame()
+      displayMsg(`${mark} won the game! Click anywhere to play again`)
     } else if (marksOnBoard === 9) {
-      console.log("It is a tie game!")
-      resetGame()
+      displayMsg(`Tie Game! Click anywhere to play again`)
     }
     mark = (mark === 'X') ? 'O' : 'X'
   }
@@ -51,4 +57,9 @@ function listenForClicksOnCells() {
   $(".cell").click(markCell)
 }
 
+function listenForClickOnMessage() {
+  $("#message").click(resetGame)
+}
+
 listenForClicksOnCells()
+listenForClickOnMessage()
