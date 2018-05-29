@@ -32,8 +32,14 @@ body {
   width: 30%;
   background-color: #605;
   animation: background-shimmer 20s forwards infinite;
+  
+  /* text */
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+  font-size: 18vw;
   font-weight: bold;
-  text-align: center;
+  color: #fb7;
 }
 
 @keyframes background-shimmer {
