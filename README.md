@@ -1,6 +1,6 @@
 # jQuery Logic
 
-**NOTE:** This lecture should be coded step by step in front of the students. Please take a moment to remove the provided code in `tictactoe.js` and make sure you are familiar with the steps described below. Neither our style sheet, `index.css`, nor the provided html, `index.html`, should require editing. 
+**NOTE:** This lecture should be coded step by step in front of the students. All code should go in `index.js`. Neither our style sheet, `index.css`, nor the provided html, `index.html`, should require editing. 
 
 ## Objectives
 
