@@ -9,4 +9,4 @@ var winArr = [
   ["#0-2", "#1-1", "#2-0"] // forward slash
 ]
 
-// code in README.md and solution branch available (`git co solution`)
+// code-along with the README.md
