@@ -323,6 +323,6 @@ function markCell() {
 
 We hope building tic-tac-toe has made you feel as free as this horse. As burgeoning programmers, she really embodies us, doesn't she? Once a user, stuck in someone else's manufactured fence/browser. Now with the critical skills and know-how to blast outta the artificial boundaries and enter the wide world of development! 
 
-![img](https://media.giphy.com/media/8F3su6mBqzy3ShRLsw/giphy.gif)
+<a href="http://forgifs.com" target="_blank"><div style="text-align:center"><img src="http://forgifs.com/gallery/d/260747-2/Horse-sliding-escape.gif?" alt="forgifs.com"/></div></a>
 
 [every]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
