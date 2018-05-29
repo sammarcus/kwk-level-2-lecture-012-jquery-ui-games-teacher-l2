@@ -2,28 +2,29 @@
 
 **NOTE:** This lecture should be coded step by step in front of the students. All code should go in `index.js`. Neither our style sheet, `index.css`, nor the provided html, `index.html`, should require editing. 
 
+
 ## Objectives
 
-Now that we've covered what jQuery can do for us visually, this lecture explores how far we can leverage jQuery to help integrate JavaScript logic with the DOM. This lecture aims to teach jQuery/JavaScript/DOM while building an example of a simple Tic-Tac-Toe implementation.
+Now that we've covered what jQuery can do for us visually, this lecture explores how we can leverage jQuery to help integrate JavaScript logic with the DOM. This lecture aims to teach jQuery/JavaScript/DOM skills while implementation a basic Tic-Tac-Toe program.
 
 
 ## SWBATS
 
-- JAVASCRIPT - Identify JavaScript's role in front end web development
+- JAVASCRIPT - Identify a major JavaScript role in front end web development
 - JAVASCRIPT/JQUERY - Leverage jQuery methods to manipulate specific DOM elements to add interactivity
 
 
 ## Introduction
 
-We're going to be using JavaScript and jQuery to make a 2-player Tic-Tac-Toe game. JavaScript will do the majority of the work, with jQuery stepping in to facilitate DOM interaction. 
+We're going to be using JavaScript and jQuery to make a 2-player Tic-Tac-Toe game. JavaScript will do the majority of the work, with jQuery stepping in to facilitate DOM interaction.
 
-There are a few discrete things we will want to address when making a Tic-Tac-Toe game. If we were beginning to architect our program, we might start with a list like this:
+There are a few discrete things we will want to address when making our Tic-Tac-Toe game. If we were beginning to architect our program, we might start with a list like this:
   - create the visual board (completed already! `index.html` and `index.css` have all we need there)
-  - capture player clicks on cells
-  - alternate back and forth, between 'X' and 'O'
+  - capture player clicks on cells and place markers
+  - alternate back and forth, between 'X' and 'O' markers
   - after every turn, check whether the game is over
   - display game-over/winner/scratch
-  - logic to reset the game and start over without refreshing the browser
+  - reset the game and start over without refreshing the browser
 
 Going forward, we will address each of these in turn.
 
@@ -34,7 +35,7 @@ Aside from the exact background color, the `index.html` page should look like th
 
 ![tic-tac-toe board](https://curriculum-content.s3.amazonaws.com/KWK/tic-tac-toe-board.png)
 
-While the required HTML has all been provided, let's take a quick look at `index.html` to make sure we are familiar with the lay of the land before we begin adding our logic. We have a board, made up of three rows, made up of three cells each. Those cells are empty to start, but we will populate them with either an 'X' or an 'O' when a player clicks on them:
+While the required HTML has all been provided, let's take a quick look at `index.html` to make sure we are familiar with the lay of the land before we begin adding our logic. We have a board, made up of three rows, made up of three cells each. Those cells are empty to start, and we will populate them with either an 'X' or an 'O' when a player clicks on them:
 
 ```html
 <div id="board">
@@ -56,11 +57,11 @@ While the required HTML has all been provided, let's take a quick look at `index
 </div>
 ```
 
-If you look closely, you will notice that our cells above all have unique identifiers. This is useful if we want to programmatically and directly access one of them in particular (as opposed to looking through an array of rows, and then an array of cells once the correct row is found). 
+If you look closely, you will notice that our cells above all have unique `id` identifiers. This is useful if we want to programmatically and directly access one of them in particular (as opposed to looking through an array of rows, and then an array of cells once the correct row is found). 
 
 The unique identifiers for the cells follows a logical convention: 
 
-**NOTE:** before the following, query the students to see if any of them can, looking at the `id` values for the cells, explain why the current convention makes sense.
+**NOTE:** before the following, query the students to see if any of them can, looking at the `id` values for the cells, explain the logic behind how their `id` values are organized.
 
 All ids are in the following format: `id = "<columnIdx>-<rowIdx>"`.
 
@@ -68,25 +69,25 @@ Alright, we have a whole program to write, and it can be difficult to know where
 
 #### Placing Tiles
 
-We want to reduce the 'barriers to interactivity' for users trying to play our epic tic-tac-toe and allow them to intuitively place their marker on the screen. An on-click listener that draws a mark in a cell should work well for this. As we know, jQuery makes attaching event listeners to elements trivial. Let's start by making a function that attaches an "on click" event listener to every cell:
+We want to reduce the 'barriers to interactivity' for users trying to play our epic Tic-Tac-Toe game and allow them to intuitively place their marker on the screen. An on-click listener that draws a mark in a cell should work well for this. 
+
+As we know, jQuery makes attaching event listeners to elements trivial. Let's start by making a function that attaches an "on click" event listener to every cell:
 
 ```js
-// index.js
-
 // while the name is not beautiful, it does accurately describe what the function should do!
 function listenForClicksOnCells() {
-  $(".cell").click(event => {
-    console.log(event)
+  $(".cell").click(function() {
+    console.log(this) // logs the cell that was clicked
   })
 }
 
-listenForClicksOnCells() // and, of course, we need to invoke it so it does just that!
+listenForClicksOnCells() // and, of course, we need to invoke it so it does just that
 ```
 
 OK! Let's continue being reasonable developers and stop here to test what we have in the browser. We should see something logging out in the console along the lines of: 
 
-```js 
-w.Event {originalEvent: MouseEvent, type: "click", isDefaultPrevented: ƒ, target: 'div#2-0.cell', currentTarget: 'div#2-0.cell'}
+```html
+<div id="2-0" class="cell"></div>
 ```
 
 It looks like our "on click" event listener is working just fine. This is only half the job, though. As you know, event listeners are paired with event handlers so we can actually _do something_ when an event is recognized. 
@@ -94,7 +95,6 @@ It looks like our "on click" event listener is working just fine. This is only h
 We currently only have a `console.log()`, which is printing the cell itself, stubbed in where our event handler should be. Let's make one now:
 
 ```js
-// index.js
 function markCell() {
   this.innerText = "X" // 'this' is a reference to the element that was clicked (the cell) 
 }
@@ -110,7 +110,7 @@ BOOM! We should have working code in the browser (no matter that all we can do i
 
 #### Taking Turns
 
-As we know, HTML is insufficient to keep track of "who's turn it is". We will need to write some JavaScript to manage the gameplay. Let's keep things as simple as possible, and add in a global variable that is keeping track of the next character that should be drawn. Once we have that, all we need to do is make sure to swap it with the opposite character after every turn:
+As we know, HTML is insufficient to keep track of "whose turn it is". We will need to write some JavaScript to manage the gameplay. Let's keep things as simple as possible, and add in a global variable that is keeping track of the next character that should be drawn. Once we have that, all we need to do is make sure to swap it with the opposite character after every turn:
 
 ```js
 // index.js
@@ -123,7 +123,7 @@ function markCell() {
 }
 ```
 
-**NOTE:** Show this in the browser. We should be able to draw "X" and an "O" in every cell. Also show what happens when we click on a cell that has already been filled. 
+**NOTE:** Show this in the browser. We should be able to draw "X" and an "O" in every cell. Also show what happens when we click on a cell that has already been filled.
 
 That looks pretty good, but if we are being responsible and checking our results in the browser, we quickly see an error: 'X' and 'O' can overwrite each other. This should be a simple fix: 
 
@@ -141,7 +141,7 @@ Ok, that is a pretty simple solution. We could have done this a number of ways, 
 
 #### Implementing Game Over Scenarios
 
-We are almost finished with basic tic-tac-toe. Next, we will implement the functionality to check whether a game is over. As you know, there are two end-game scenarios in the cutthroat game of tic-tac-toe: a player wins or a tie is called. Let's code each in turn: 
+We are almost finished with basic tic-tac-toe. Next, we will implement the functionality to check whether a game is over. As you know, there are two end-game scenarios in the cutthroat game of Tic-Tac-Toe: a player wins or a tie is called. Let's code each in turn: 
 
 ###### Won Game
 
@@ -197,11 +197,11 @@ function markCell() {
 }
 ```
 
-There we go! That handles our 'game won' scenario. Now just to handle our 'tie game' case:
+There we go! That handles our 'game won' scenario. Now just to handle our 'tie game' case.
 
 ###### Tie Game
 
-Keeping things as simple as possible, all we need to do here is check whether all the tiles have been filled in. Let's be lazy and make a global variable that keeps track of how many times a mark has been placed. We know 9 is, and always will be, the maximum amount of times the players can move. This makes our life easy! We ask: "has someone won? No? If 9 marks been made it is a tie!":
+Keeping things as simple as possible, all we need to do here is check whether all the tiles have been filled in. Let's be lazy and make a global variable that keeps track of how many times a mark has been placed. We know 9 is, and always will be, the maximum amount of times the players can move. This makes our life easy! We ask: "Has someone won? No? Then if 9 marks have been made it must be a tie. Otherwise keep playing!":
 
 ```js
 var marksOnBoard = 0
@@ -222,7 +222,7 @@ function markCell() {
 }
 ```
 
-We are about there. We have our end game conditions all hooked up and, using `console.log()`, we can see that they are working properly. All we have left to do now is add in the ability to reset a game as well as some **JAZZ!**
+We are about there. We have our end game conditions all hooked up and, using `console.log()`, we can see that they are working properly. All we have left to do now is add in the ability to reset a game.
 
 #### Reset Game
 
@@ -236,7 +236,7 @@ function resetGame() {
 }
 ```
 
-What we have above will reset our game-dictating global variables to their starting values and reset the board. If we throw this in our `index.js`, we can run it in the console (`resetGame()`) anytime to check that it is working. To incorporate this into our game logic, we need it following our end-game conditions:
+What we have above will reset our game-dictating global variables to their starting values and reset the board to empty strings in every cell. If we throw this in our `index.js`, we can run it in the console (`resetGame()`) anytime to check that it is working. To incorporate this into our game logic, we need it following our end-game conditions:
 
 ```js
 function markCell() {
@@ -255,18 +255,18 @@ function markCell() {
 }
 ```
 
-**NOTE:** Take a moment now to make sure everything is working as intended with the class. Is there any functionality that is missing? Have we done our due diligence and created a fully working tic-tac-toe game?
+**NOTE:** Take a moment now to make sure everything is working as intended with the class. Is there any functionality that is missing? Have we done our due diligence and created a fully working Tic-Tac-Toe game?
 
-That does it! We have created a fully functioning tic-tac-toe 'in-the-browser' game using JavaScript + jQuery. 
+That does it! We have created a fully functioning Tic-Tac-Toe 'in-the-browser' game using JavaScript + jQuery. 
 
 But wait! There is some low hanging fruit left for us...
 
 ## JAZZ!
 
-As the game currently stands, on 'game end' we simply log a message and reset the board. Instead, let's reward the users and request _their_ prompt to restart the game. We can do this easily with a little refactoring to `resetGame()`:
+As the game currently stands, on 'game end', we simply log a message and reset the board. Instead, let's reward the users and request _their_ prompt to restart the game. We can do this easily with a little refactoring to `resetGame()`:
 
 ```js
-// now, we will take in a custom message to display and have a popup!
+// now, we will take in a custom message to display and have a popup
 function resetGame(msg) {
   $("#message").text(msg)
   marksOnBoard = 0
@@ -275,7 +275,7 @@ function resetGame(msg) {
 }
 ```
 
-...this makes a sweet message, but it doesn't disappear on click! Let's be terribly clever and add an event listener to our `#message` element that, whenever it is clicked, makes it disappear. We can also use this opportunity to refactor our code so the _message_ is displayed on game end and  `resetGame()` is only executed when a user acknowledges it...
+...this makes a sweet message, but it doesn't disappear on click! Let's be terribly clever and add an event listener to our `#message` element that, whenever it is clicked, makes it disappear. We can also use this opportunity to refactor our code so the message is displayed on game end and `resetGame()` is only executed when a user acknowledges the message...
 
 ```js
 // now reset game only does what its name implies
@@ -298,7 +298,7 @@ function listenForClickOnMessage() {
   $("#message").click(resetGame)
 }
 
-listenForClicksOnCells()
+listenForClickOnMessage()
 ```
 ...and we can't forget to update out `markCell()` function to use `displayMsg()` (which is now responsible for `resetGame()` via the message event listener)...
 
@@ -321,7 +321,7 @@ function markCell() {
 
 ## Wrapping Up
 
-We hope building tic-tac-toe has made you feel as free as this horse. As burgeoning programmers, she really embodies us, doesn't she? Once a user, stuck in someone else's manufactured fence/browser. Now with the critical skills and know-how to blast outta the artificial boundaries and enter the wide world of development! 
+We hope building tic-tac-toe has made you feel as free as this horse. As burgeoning programmers, she really embodies us, doesn't she? Once a user, stuck in someone else's manufactured fence/browser. Now with the critical skills and know-how to blast outta' the artificial boundaries and enter the wide world of web development! 
 
 <a href="http://forgifs.com" target="_blank"><div style="text-align:center"><img src="http://forgifs.com/gallery/d/260747-2/Horse-sliding-escape.gif?" alt="forgifs.com"/></div></a>
 
