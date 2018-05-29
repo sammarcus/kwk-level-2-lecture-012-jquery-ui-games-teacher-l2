@@ -1,0 +1,50 @@
+body {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background-color: #605;
+  animation: background-shimmer 20s forwards infinite;
+}
+
+#board {
+  width: 70%;
+  height: 70%;
+  max-width: 700px;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  justify-content: space-between;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  
+}
+
+.cell {
+  margin: 0;
+  padding: 0;
+  height: 30%;
+  width: 30%;
+  background-color: #605;
+  animation: background-shimmer 20s forwards infinite;
+  
+  /* text */
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+  font-size: 18vw;
+  font-weight: bold;
+  color: #fb7;
+}
+
+@keyframes background-shimmer {
+  0% { background-color: #605 }
+  33.3% { background-color: #523 }
+  66.6% { background-color: #424 }
+  100% { background-color: #605 }
+}
