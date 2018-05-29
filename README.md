@@ -4,7 +4,7 @@
 
 ## Objectives
 
-Now that we've learned what jQuery can do for us visually, let's explore how far we can leverage it for logic. We're going to walk through building a simple game of Tic-Tac-Toe. 
+Now that we've covered what jQuery can do for us visually, this lecture explores how far we can leverage jQuery to help integrate JavaScript logic with the DOM. This lecture aims to teach jQuery/JavaScript/DOM while building an example of a simple Tic-Tac-Toe implementation.
 
 
 ## SWBATS
