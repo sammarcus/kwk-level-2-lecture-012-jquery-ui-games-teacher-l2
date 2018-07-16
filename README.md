@@ -28,6 +28,7 @@ There are a few discrete things we will want to address when making our Tic-Tac-
 
 Going forward, we will address each of these in turn.
 
+change
 
 #### Board Set Up
 
